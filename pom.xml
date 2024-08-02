@@ -7,15 +7,137 @@
   <version>1.0-SNAPSHOT</version>
   <name>RestApp_Postman_Swagger Maven Webapp</name>
   <url>http://maven.apache.org</url>
+
+  <properties>
+    <junit.platform.version>1.10.2</junit.platform.version>
+    <unit-jupiter.version>5.10.0</unit-jupiter.version>
+    <org.mockito.version>5.12.0</org.mockito.version>
+
+    <flyway-core.version>10.15.2</flyway-core.version>
+    <hibernate-core.version>6.5.2.Final</hibernate-core.version>
+    <mysql.version>8.0.33</mysql.version>
+    <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
+    <gson.version>2.10.1</gson.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>${jakarta.servlet.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${mysql.version}</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>${hibernate-core.version}</version>
+
+    </dependency>
+
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+      <version>${flyway-core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+      <version>${flyway-core.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${org.mockito.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>${org.mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${unit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${unit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite-api</artifactId>
+      <version>${junit.platform.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-console-standalone</artifactId>
+      <version>${junit.platform.version}</version>
+    </dependency>
   </dependencies>
+
+
   <build>
     <finalName>RestApp_Postman_Swagger</finalName>
+    <plugins>
+
+
+      <plugin>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-maven-plugin</artifactId>
+        <version>10.15.2</version> <!-- Убедитесь, что версия актуальна -->
+        <configuration>
+          <url>jdbc:postgresql://localhost:5432/hibernate_demo_db</url>
+          <user>postgres</user>
+          <password>postgres</password>
+          <schemas>schema_flyway</schemas> <!-- Укажите ваши схемы, если нужно -->
+          <locations>classpath:db/migration</locations> <!-- Путь к вашим миграциям -->
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>21</source> <!-- Версия исходников -->
+          <target>21</target> <!-- Версия байткода -->
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.1</version>
+      </plugin>
+
+    </plugins>
   </build>
 </project>
