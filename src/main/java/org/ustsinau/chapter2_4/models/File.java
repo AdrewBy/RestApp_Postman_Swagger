@@ -1,5 +1,6 @@
 package org.ustsinau.chapter2_4.models;
 
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,9 +9,12 @@ public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Expose
     private Integer id;
+
     @Column(name = "name")
-    private String name;
+    private String fileName;
+    @Expose
     @Column(name = "filePath")
     private  String filePath;
 
@@ -25,12 +29,12 @@ public class File {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFileName(String name) {
+        this.fileName = name;
     }
 
     public String getFilePath() {
@@ -45,7 +49,7 @@ public class File {
     public String toString() {
         return "File{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + fileName + '\'' +
                 ", filePath='" + filePath + '\'' +
                 '}';
     }

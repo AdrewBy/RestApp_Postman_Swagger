@@ -1,5 +1,8 @@
 package org.ustsinau.chapter2_4.models;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -10,10 +13,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Expose
     private Integer id;
     @Column(name = "name")
-    private String name;
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    @Expose
+    private String userName;
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
     List<Event> events;
 
     public User() {
@@ -27,12 +33,12 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public List<Event> getEvents() {
@@ -47,7 +53,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + userName + '\'' +
                 ", events=" + events +
                 '}';
     }

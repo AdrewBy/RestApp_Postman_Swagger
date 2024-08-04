@@ -1,5 +1,6 @@
 package org.ustsinau.chapter2_4.repository.impl;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -66,7 +67,14 @@ public class EventRepositoryImpl implements EventRepository {
     public Event getById(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()){
             Event event = session.get(Event.class, id);
+            if (event != null) {
+                Hibernate.initialize(event.getUser()); // Инициализация ленивой коллекции
+                if (event.getUser() != null) {
+                    Hibernate.initialize(event.getUser().getEvents()); // Инициализация ленивой коллекции пользователя
+                }
+            }
             return event;
+
         }catch (Exception e){
             throw new RuntimeException("Error getting event by id", e);
         }
@@ -75,8 +83,10 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> getAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()){
-            Query<Event> query = session.createQuery("From Event ", Event.class);
+            String hql = "FROM Event order by id";
+            Query<Event> query = session.createQuery(hql, Event.class);
             List<Event> events = query.list();
+
             return events;
         }catch (Exception e){
             throw new RuntimeException("Error retrieving all events", e);
