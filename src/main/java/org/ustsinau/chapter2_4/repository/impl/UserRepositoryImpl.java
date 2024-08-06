@@ -1,6 +1,6 @@
 package org.ustsinau.chapter2_4.repository.impl;
 
-import org.hibernate.Hibernate;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -71,7 +71,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User getById(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()){
             User user =session.get(User.class, id);
-           Hibernate.initialize(user.getEvents());
+      //     Hibernate.initialize(user.getEvents());
             return  user;
         }catch (HibernateException e){
             throw new RuntimeException("Error getting user by id", e);
@@ -84,7 +84,8 @@ public class UserRepositoryImpl implements UserRepository {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()){
 
-            String hql = "FROM User u left JOIN FETCH u.events ORDER BY u.id";
+         //   String hql = "FROM User u left JOIN FETCH u.events ORDER BY u.id";
+            String hql = "FROM User u ORDER BY u.id";
             Query<User> query = session.createQuery(hql, User.class);
             List<User> users = query.list();
             return users;

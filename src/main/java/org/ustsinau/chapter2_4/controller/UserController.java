@@ -2,6 +2,14 @@ package org.ustsinau.chapter2_4.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,31 +23,51 @@ import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet("/api/v1/users")
+@Tag(name = "Users", description = "Operations related to users")
 public class UserController extends HttpServlet {
     private final UserService userService = new UserServiceImpl();
     private final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    @Override
+
+
+    @Operation(summary = "Get users", description = "Retrieve all users or a user by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved user(s)"),
+            @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @Parameters({
+            @Parameter(name = "id", in = ParameterIn.QUERY, description = "ID of the user", required = true, schema = @Schema(type = "integer"))
+    })
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws  IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        User user = GSON.fromJson(request.getReader(), User.class);
-        Integer id = user.getId();
-        if (id == 0) {
+        String userIdParam = request.getParameter("id");
+        if (userIdParam == null || userIdParam.isEmpty()) {
+            throw new NumberFormatException("user_id parameter is missing or empty");
+        }
+        Integer userId = Integer.valueOf(userIdParam);
+
+        if (userId == 0) {
             List<User> userList = userService.getAll();
 
             out.print(GSON.toJson(userList));
             out.flush();
         } else {
-            User u = userService.getById(id);
+            User u = userService.getById(userId);
 
             out.print(GSON.toJson(u));
             out.flush();
         }
     }
 
-    @Override
+
+    @Operation(summary = "Create user", description = "Create a new user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws  IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
@@ -51,9 +79,16 @@ public class UserController extends HttpServlet {
     }
 
     @Override
+    @Operation(summary = "Update user", description = "Update an existing user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws  IOException {
         response.setContentType("application/json");
         User user = GSON.fromJson(request.getReader(), User.class);
+
         userService.update(user);
 
         PrintWriter out = response.getWriter();
@@ -61,7 +96,13 @@ public class UserController extends HttpServlet {
         out.flush();
     }
 
-    @Override
+
+    @Operation(summary = "Delete user", description = "Delete an existing user by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws  IOException {
         response.setContentType("application/json");
         User user = GSON.fromJson(request.getReader(), User.class);
