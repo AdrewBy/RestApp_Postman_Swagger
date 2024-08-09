@@ -18,7 +18,7 @@ public class EventRepositoryImpl implements EventRepository {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             try {
-                session.persist(event);
+                session.merge(event);
                 transaction.commit();
             } catch (Exception e) {
                 transaction.rollback();

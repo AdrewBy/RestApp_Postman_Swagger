@@ -76,7 +76,6 @@ public class UserRepositoryImpl implements UserRepository {
         }catch (HibernateException e){
             throw new RuntimeException("Error getting user by id", e);
         }
-
     }
 
     @Override

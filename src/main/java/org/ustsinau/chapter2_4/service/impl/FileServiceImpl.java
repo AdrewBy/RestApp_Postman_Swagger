@@ -15,7 +15,10 @@ import org.ustsinau.chapter2_4.utils.GetFileNameUtil;
 import org.ustsinau.chapter2_4.utils.HibernateUtil;
 
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 @MultipartConfig
 public class FileServiceImpl implements FileService {
@@ -66,28 +69,25 @@ public class FileServiceImpl implements FileService {
 
         String fileName = GetFileNameUtil.getFileName(inputStream);
 
+        // Получаем значение переменной среды
+        String uploadDir = System.getenv("UPLOAD_DIR");
+        if (uploadDir == null) {
+            throw new RuntimeException("UPLOAD_DIR environment variable not set");
+        }
+
+        // Используем Paths для создания полного пути
+        Path filePath = Paths.get(uploadDir, fileName);
+
         File file = new File();
         file.setFileName(fileName);
-        file.setFilePath("C:\\Soft\\TesT\\" + fileName);
+        file.setFilePath(filePath.toString());
 
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-            try {
-                // Получаем пользователя из сессии
-                User user = session.get(User.class, userId);
-                Event event = new Event();
-                event.setUser(user);
-                event.setFile(file);
+        User user = userService.getById(userId);
+        Event event = new Event();
+        event.setUser(user);
+        event.setFile(file);
+        eventService.create(event);
 
-                // Сохраняем событие
-                session.save(event);
-
-                transaction.commit();
-            } catch (Exception e) {
-                transaction.rollback();
-                throw new RuntimeException("Error creating event", e);
-            }
-        }
         return file;
     }
 }

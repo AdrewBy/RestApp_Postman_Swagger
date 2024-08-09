@@ -88,9 +88,9 @@ public class FileController extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         // Получение userId из параметров запроса
-        String userIdParam = request.getParameter("user_id");
+        String userIdParam = request.getHeader("user_id");
         if (userIdParam == null || userIdParam.isEmpty()) {
-            throw new NumberFormatException("user_id parameter is missing or empty");
+            throw new NumberFormatException("user_id header is missing or empty");
         }
         Integer userId = Integer.valueOf(userIdParam);
 

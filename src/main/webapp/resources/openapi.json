@@ -5,6 +5,11 @@
     "description": "API for managing users, files, and events",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "http://localhost:8080/"
+    }
+  ],
   "tags": [
     {
       "name": "user",
@@ -91,7 +96,17 @@
         ],
         "summary": "Update an existing user",
         "description": "Updates the user with the provided data.",
-
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -148,7 +163,7 @@
         "parameters": [
           {
             "name": "user_id",
-            "in": "query",
+            "in": "header",
             "description": "User id",
             "required": true,
             "schema": {
@@ -210,7 +225,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "integer"
+            "type": "integer",
+            "format": "int32"
           },
           "userName": {
             "type": "string"
@@ -224,7 +240,10 @@
       "File": {
         "type": "object",
         "properties": {
-
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "fileName": {
             "type": "string"
           }
@@ -237,7 +256,10 @@
       "Event": {
         "type": "object",
         "properties": {
-
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           },
